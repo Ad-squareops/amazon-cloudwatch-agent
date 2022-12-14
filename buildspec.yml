@@ -1,0 +1,37 @@
+version: 0.2
+
+run-as: root
+
+env:
+  shell: bash
+  secrets-manager:
+        DB_NAME: "DBsecretAdi:DB_NAME"
+        DB_USER: "DBsecretAdi:DB_USER"
+        DB_PASSWORD: "DBsecretAdi:DB_PASSWORD"
+        DB_HOST: "DBsecretAdi:DB_Host"
+
+phases:
+    pre_build:
+        commands:
+            - echo "Pre build phase execution is going to start"
+            - sudo apt update -y
+            - echo "installing source wordpress dependancies"
+            - sudo apt install nginx -y
+            - echo "Pre build ends here"
+    build:
+        commands:
+            - echo "build phase execution is going to start"
+            - sed -i "s|db_name|'$DB_Name|" .env
+            - sed -i "s|db_user|'$DB_USER|" .env
+            - sed -i "s|db_password|'$DB_PASSWORD|" .env
+            - sed -i "s|db_host|'$DB_HOST|" .env
+            - echo build started on 'date'
+            - echo "compile the wordpress code"
+    post_build:
+        commands:
+            - echo build execution Completed on 'date'
+
+artifacts:
+    files:
+        - echo "Uploading artifacts to bucket for next process of deployment"
+        - '**/*'
